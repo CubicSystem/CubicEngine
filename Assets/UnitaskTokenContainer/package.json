@@ -10,7 +10,7 @@
     "author": {
         "name": "cubicsystem",
         "url": "https://github.com/cubicsystem"
-    }
+    },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com/@cubicsystem"
     }
