@@ -1,17 +1,42 @@
-name: Release Packages
+name: Unity Packages Publish
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
-
   test:
+    name: Test in ${{ matrix.testMode }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - .
+        unityVersion:
+          - 2020.3.14f1
+        testMode:
+          - all
     steps:
       - uses: actions/checkout@v2
-      - name: Run Tests
-        run: # Add your test command here
+        with:
+          lfs: true
+      - uses: game-ci/unity-test-runner@v2
+        id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: ${{ matrix.projectPath }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ matrix.testMode }} Test Results
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
 
   publish:
     needs: test
@@ -20,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         packagePath:
-          - ./Assets/ScriptableArchiture
+		      - ./Assets/ScriptableArchiture
           - ./Assets/UnitaskTokenContainer
     permissions:
       packages: write
