@@ -1,4 +1,4 @@
-name: Unity Packages Publish
+name: Unity Example Packages Publish
 
 on:
   release:
@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         packagePath:
-		      - ./Assets/ScriptableArchiture
+          - ./Assets/ScriptableArchiture
           - ./Assets/UnitaskTokenContainer
     permissions:
       packages: write
