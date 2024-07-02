@@ -14,7 +14,7 @@ jobs:
         projectPath:
           - .
         unityVersion:
-          - 2020.3.14f1
+          - 2022.3.21f1
         testMode:
           - all
     steps:
