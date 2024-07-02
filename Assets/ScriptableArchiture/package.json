@@ -1,0 +1,17 @@
+{
+    "name": "com.cubicsystem.scriptablearchitecture",
+    "version": "0.0.1",
+    "displayName": "Scriptable Cubic Architecture",
+    "description": "Scriptable Architecture Package for CubicSystem",
+    "unity": "2019.4",
+    "license": "UNLICENSED",
+    "dependencies": {
+    },
+    "author": {
+        "name": "cubicsystem",
+        "url": "https://github.com/cubicsystem"
+    }
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/@cubicsystem"
+    }
+}
