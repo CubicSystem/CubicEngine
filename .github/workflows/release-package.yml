@@ -22,6 +22,18 @@ jobs:
         with:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
-      - run: npm publish ${{ matrix.packagePath }}
+      - name: Check package version
+        id: check_version
+        run: |
+          package_version=$(node -p "require('${{ matrix.packagePath }}/package.json').version")
+          latest_version=$(curl -s https://api.github.com/repos/${{ github.repository }}/packages/npm/${{ github.event.repository.name }}/${{ github.event.release.tag_name }} | jq -r '.version')
+          if [ "$package_version" != "$latest_version" ]; then
+            echo "::set-output name=publish::true"
+          else
+            echo "::set-output name=publish::false"
+          fi
+      - name: Publish package
+        if: ${{ steps.check_version.outputs.publish == 'true' }}
+        run: npm publish ${{ matrix.packagePath }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.TOKEN}}
