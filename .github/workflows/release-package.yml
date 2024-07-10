@@ -3,7 +3,6 @@ name: Unity Packages Publish
 on:
   release:
     types: [created]
-  workflow_dispatch:
 
 jobs:
   publish:
@@ -24,16 +23,6 @@ jobs:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
       - name: Publish package
-        run: |
-          for path in ${{ join(matrix.packagePath, ' ') }}; do
-            package_version=$(node -p "require('$path/package.json').version")
-            latest_version=$(curl -s https://api.github.com/repos/${{ github.repository }}/packages/npm/${{ github.event.repository.name }}/${{ github.event.release.tag_name }} | jq -r '.version')
-            if [ "$package_version" != "$latest_version" ]; then
-              echo "Publishing $path version $package_version"
-              npm publish $path
-              env:
-                NODE_AUTH_TOKEN: ${{ secrets.TOKEN }}
-            else
-              echo "Skipping $path, version $package_version is already published"
-            fi
-          done
+        run: npm publish ${{ matrix.packagePath }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.TOKEN}}
