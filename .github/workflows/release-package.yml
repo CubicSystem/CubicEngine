@@ -3,6 +3,7 @@ name: Unity Packages Publish
 on:
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   publish:
