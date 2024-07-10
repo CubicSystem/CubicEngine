@@ -32,7 +32,7 @@ jobs:
               echo "Publishing $path version $package_version"
               npm publish $path
               env:
-                NODE_AUTH_TOKEN: ${{secrets.TOKEN}}
+                NODE_AUTH_TOKEN: ${{ secrets.TOKEN }}
             else
               echo "Skipping $path, version $package_version is already published"
             fi
