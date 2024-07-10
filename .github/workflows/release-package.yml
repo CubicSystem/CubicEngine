@@ -23,18 +23,17 @@ jobs:
         with:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
-      - name: Check package version
-        id: check_version
-        run: |
-          package_version=$(node -p "require('${{ matrix.packagePath }}/package.json').version")
-          latest_version=$(curl -s https://api.github.com/repos/${{ github.repository }}/packages/npm/${{ github.event.repository.name }}/${{ github.event.release.tag_name }} | jq -r '.version')
-          if [ "$package_version" != "$latest_version" ]; then
-            echo "::set-output name=publish::true"
-          else
-            echo "::set-output name=publish::false"
-          fi
       - name: Publish package
-        if: ${{ steps.check_version.outputs.publish == 'true' }}
-        run: npm publish ${{ matrix.packagePath }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.TOKEN}}
+        run: |
+          for path in ${{ join(matrix.packagePath, ' ') }}; do
+            package_version=$(node -p "require('$path/package.json').version")
+            latest_version=$(curl -s https://api.github.com/repos/${{ github.repository }}/packages/npm/${{ github.event.repository.name }}/${{ github.event.release.tag_name }} | jq -r '.version')
+            if [ "$package_version" != "$latest_version" ]; then
+              echo "Publishing $path version $package_version"
+              npm publish $path
+              env:
+                NODE_AUTH_TOKEN: ${{secrets.TOKEN}}
+            else
+              echo "Skipping $path, version $package_version is already published"
+            fi
+          done
